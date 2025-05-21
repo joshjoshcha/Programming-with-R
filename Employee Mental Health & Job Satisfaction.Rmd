@@ -1,0 +1,145 @@
+---
+title: "Employee Mental Health & Job Satisfaction"
+output: pdf_document
+---
+
+Select the following packages 
+```{r}
+library(readxl)
+library(ggplot2)
+library(tidyverse)
+```
+
+# Part 1 
+##. A. Mean, median, standard deviation, quantiles, min/max of numerical variables
+```{r}
+data <- read_excel("Group9_EmployeeMentalHealth_JobSatisfaction (1).xlsx")
+selected_columns <- data[, c("Age", "Work_Experience", "Weekly_Work_Hours", "Stress_Level", "Work_Life_Balance", "Company_Culture_Score", "Job_Satisfaction" )]
+
+# Compute summary statistics
+summary_stats <- data.frame(
+  Mean = sapply(selected_columns, mean),
+  Median = sapply(selected_columns, median),
+  Std_Dev = sapply(selected_columns, sd),
+  Min = sapply(selected_columns, min),
+  Q1 = sapply(selected_columns, function(x) quantile(x, 0.25)),
+  Q3 = sapply(selected_columns, function(x) quantile(x, 0.75)),
+  Max = sapply(selected_columns, max)
+)
+
+summary_stats
+```
+
+## B. Create boxplots for each numerical variable. 
+```{r}
+ggplot(data, aes(y = Age)) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  labs(title = "Boxplot for Age", y = "Ages") 
+
+ggplot(data, aes(y = Work_Experience)) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  labs(title = "Boxplot for Work Experience", y = "Work Experience (years)") 
+
+ggplot(data, aes(y = Weekly_Work_Hours)) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  labs(title = "Boxplot for Weekly Work Hours", y = "Weekly Work Hours") 
+
+ggplot(data, aes(y = Stress_Level)) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  labs(title = "Boxplot for Stress Level", y = "Stress Level") 
+
+ggplot(data, aes(y = Work_Life_Balance)) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  labs(title = "Boxplot for Work Life Balance", y = "Work Life Balance") 
+
+ggplot(data, aes(y = Company_Culture_Score)) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  labs(title = "Boxplot for Company Culture Score", y = "Company Culture Score") 
+
+ggplot(data, aes(y = Job_Satisfaction)) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  labs(title = "Boxplot for Job Satisfaction", y = "Job Satisfaction") 
+```
+Outliers are colored in red.
+
+## C. Normality Testing
+
+First, let's inspect visually
+```{r}
+plot_normal_curve <- function(data, col_name) {
+  ggplot(data, aes_string(x = col_name)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 30) +
+    labs(title = paste("Histogram and Normal Curve for", col_name), 
+         x = col_name, y = "Density") 
+}
+
+for (col in names(selected_columns)){print(plot_normal_curve(data, col))}
+```
+Upon inspection, only the histogram for Weekly Work Hours looks normally distributed.
+
+Now, let's test normality using the Shaprio-Wilk test.
+The null hypothesis for the Shapiro-Wilk test is that data "is" normally distributed.
+```{r}
+shapiro_test_results <- lapply(selected_columns, shapiro.test)
+shapiro_test_results
+```
+All of the variables have a very small p-value, which means we have to reject
+the null hypothesis and accept the alternative hypothesis, which is that 
+data is not normally distributed. 
+
+## D. Pearson’s correlation analysis to determine relationships between numerical variables.
+
+```{r}
+correlation_matrix <- cor(selected_columns, method = "pearson")
+correlation_matrix
+```
+
+## E. Consider transforming or normalizing the data. 
+
+Let's try z-score normalization
+```{r}
+z_scores <- sapply(selected_columns, function(x) {
+  (x - mean(x)) / sd(x)
+}, simplify = FALSE)
+
+trans_shapiro_test_results <- lapply(z_scores, shapiro.test)
+trans_shapiro_test_results
+```
+Even after z-score normalization, we can see how all the p-values are very small.
+This means that we have to reject the null hypothesis again, so once again,
+according to the Shapiro test, our transformed data is not normally distributed. 
+
+# Part 2
+Our goal now is to test whether employees in high-stress industries report lower 
+job satisfaction scores than those in low-stress industries.
+
+Since we failed to transform our data so that it follows normal distribution,
+we will use the Mann-Whitney U test, which does not have that as a requirement.
+
+Null Hypothesis (H0): There is no relationship between stress level and job satisfaction.
+Alternative Hypothesis (H1): There is a relationship between stress level and job satisfaction.
+
+```{r}
+# Perform the Mann-Whitney U test (also known as Wilcoxon rank-sum test)
+wilcox_test_results <- wilcox.test(data$Job_Satisfaction, data$Stress_Level)
+wilcox_test_results
+```
+Based on the results, we can conclude that there is a statistically significant difference 
+in job satisfaction scores between individuals with high and low stress levels. 
+The p-value 2.2e-16 is extremely small, so we accept the alternative hypothesis.
+2.2e-16 is much, much smaller than alpha=0.05, so we our findings are definetely
+statistically significant at alpha=0.05
+
+For the last step, let's get the correlation coefficient
+```{r}
+correlation_coefficient <- cor.test(data$Job_Satisfaction, data$Stress_Level, method = "pearson")
+correlation_coefficient
+```
+Again, p-value = 5.057e-15 is extremely small so these are statistically significant
+results. The correlation coefficient is -0.34, meaning that for every unit increase
+in job stress level, job satisfaction decreases by 0.34. 
+
+Hence, to answer the question, yes, employees who report high-stress lower satisfaction
+scores. 
+
+

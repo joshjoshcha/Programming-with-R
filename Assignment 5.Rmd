@@ -1,0 +1,235 @@
+---
+title: "Assignment 5"
+output: pdf_document
+---
+
+## Problem 1
+Perform the following tasks related to dates and times in R:
+
+a. Use Sys.Date() to get the current date and assign it to a variable named today.
+```{r}
+today <- Sys.Date()
+today
+```
+
+b. Convert the following string to a Date object using as.Date(): "12/31/2023". 
+Use the format "%m/%d/%Y".
+```{r}
+Date <- as.Date("12/31/2023", format = "%m/%d/%Y")
+Date
+```
+
+c. Create a sequence of dates starting from January 1, 2024, to January 10, 2024, 
+using the seq.Date() function with a daily interval.
+```{r}
+date_sequence <- seq.Date(from = as.Date("2024-01-01"), 
+                          to = as.Date("2024-01-10"), by = "day")
+date_sequence
+```
+
+d. Calculate the number of days between today and "1986-01-28".
+```{r}
+days_difference <- today - as.Date("1986-01-28")
+days_difference
+class(days_difference)
+```
+
+e. Create a POSIXct date-time object for "2023-12-25 15:30:00" in the UTC time zone.
+```{r}
+datetime_utc <- as.POSIXct("2023-12-25 15:30:00", tz = "UTC")
+datetime_utc
+```
+
+f. Add 7 days and 12 hours to the date-time object created in part (e).
+```{r}
+new_datetime <- datetime_utc + (7 * 24 + 12) * 3600  
+new_datetime
+```
+
+g. Using difftime(), calculate the difference between "2023-12-31 23:59:59" and 
+"2023-01-01 00:00:00" in terms of weeks.
+```{r}
+start_time <- as.POSIXct("2023-01-01 00:00:00", tz = "UTC")
+end_time <- as.POSIXct("2023-12-31 23:59:59", tz = "UTC")
+time_diff <- difftime(end_time, start_time, units = "weeks")
+time_diff
+```
+
+h. Convert the following times into a difftime object:
+"3:45" as hours and minutes.
+"2:30:15" as hours, minutes, and seconds.
+```{r}
+time_1 <- as.difftime("3:45", format = "%H:%M", units = "mins")
+time_1
+time_2 <- as.difftime("2:30:15", format = "%H:%M:%S", units = "secs")
+time_2
+```
+
+i. Write an R script to determine if a given date (e.g., "2024-02-29") is valid 
+and falls on a leap year.
+```{r}
+date_validity <- function(date_str) {
+  date_input <- as.Date(date_str, format = "%Y-%m-%d")
+  if (is.na(date_input)) {
+    return(cat(date_str, "is NOT a valid date.\n"))
+  }
+  return(cat(date_str, "is a valid date.\n"))
+}
+
+# If the year is divisible by 4 and not divisible by 100, then it is a leap year
+# If the year is divisible by both 4 and 100, then it should also be divisible by 
+# 400 to be considered a leap year
+
+is_leap_year <- function(date_str) {
+  year <- as.numeric(format(as.Date(date_str), "%Y"))
+  return ((year %% 4 == 0) & (year %% 100 != 0)) | (year %% 400 == 0)
+}
+```
+
+j. Using the current system time, extract and print the year, month, and day 
+components individually.
+```{r}
+year <- format(today, "%Y")
+month <- format(today, "%m")
+day <- format(today, "%d")
+
+cat("Year:", year, "Month:", month, "Day:", day)
+```
+
+## Problem 2 
+USArrests
+
+a. Determine the number of rows and columns.
+```{r}
+nrow(USArrests)
+ncol(USArrests)
+```
+
+b. Show the row corresponding to Florida. Access the row by name, not number.
+```{r}
+FL_row <- USArrests["Florida", ]
+FL_row
+```
+
+c. Show the last three rows.
+```{r}
+last_three_rows <- tail(USArrests, 3)
+last_three_rows
+```
+
+d. Find the name of the states in rows 20, 30, and 40.
+```{r}
+state_names <- rownames(USArrests)[c(20, 30, 40)]
+state_names
+```
+
+e. Create two new data frames (keeping the same row names as USArrests):
+USArrests2 containing columns Murder, Assault, and Rape.
+Urban that only contains the column UrbanPop.
+```{r}
+USArrests2 <- USArrests[, c("Murder", "Assault", "Rape")]
+USArrests2
+Urban <- USArrests[, "UrbanPop", drop = FALSE]
+Urban
+```
+
+f. In Urban, rename the column UrbanPop to “UrbanPercent”.
+```{r}
+colnames(Urban)[colnames(Urban) == "UrbanPop"] <- "UrbanPercent"
+colnames(Urban)
+```
+
+g. Find the median of each column in USArrests2.
+```{r}
+column_medians <- apply(USArrests2, 2, median)
+column_medians
+```
+
+h. In USArrests2, add a column called “Total”, which gives the total sum of Murder, 
+Assault, and Rape.
+```{r}
+USArrests2$Total <- rowSums(USArrests2)
+USArrests2
+```
+
+i. Using the order() function, list the states in USArrests2 according to Murder
+in decreasing order.
+```{r}
+ordered_states <- rownames(USArrests2)[order(USArrests2$Murder, decreasing = TRUE)]
+ordered_states
+```
+
+j. Show the subset of the data frame USArrests2 containing all states having 
+Murder < 10, Assault < 100, and Rape < 10.
+```{r}
+subset_USArrests2 <- USArrests2[USArrests2$Murder < 10 & USArrests2$Assault < 100 & USArrests2$Rape < 10, ]
+subset_USArrests2
+```
+
+k. Using data frame USArrests, find the across-state average murder rate (Murder) 
+in regions where the percentage of the population living in urban areas (UrbanPop) 
+exceeds 77%. Compare this with the average murder rate where the urban area 
+population is less than 50%.
+```{r}
+high_urban_avg_murder <- mean(USArrests$Murder[USArrests$UrbanPop > 77])
+low_urban_avg_murder <- mean(USArrests$Murder[USArrests$UrbanPop < 50])
+cat("Average Murder Rate (UrbanPop > 77%):", high_urban_avg_murder, "\n")
+cat("Average Murder Rate (UrbanPop < 50%):", low_urban_avg_murder, "\n")
+```
+
+l. Use the plot() function to show Murder vs Assault. 
+Identify and explain any relationships you see.
+```{r}
+plot(USArrests$Murder, USArrests$Assault, 
+     main = "Murder vs Assault (per 100,000 people)", 
+     xlab = "Murder Rate", 
+     ylab = "Assault Rate", 
+     pch = 19, col = "blue")
+
+# States with higher rates of murder also tend to have higher rates of assault.
+# More states fall toward the lower end of the murder & assault axes.
+```
+
+# Problem 3
+Install the package COUNT. Then run the following:
+```{r}
+library(COUNT)
+data(fishing)
+pois.glm <- glm(totabund ~ meandepth, data = fishing, family = poisson)
+```
+
+a. Verify that the object pois.glm is a list.
+```{r}
+typeof(pois.glm)
+```
+
+b. Find the number of components in pois.glm and display their names.
+```{r}
+length(names(pois.glm))
+names(pois.glm)
+```
+
+c. Among all the components of pois.glm, is there any component which is a list itself?
+```{r}
+typeof(pois.glm$qr) 
+# qr is an example of a component which is a list itself
+```
+
+d. Find out the number of elements contained in the component residuals, 
+as well as the maximum and minimum values.
+```{r}
+pois.glm$residuals
+length(pois.glm$residuals)
+max(pois.glm$residuals)
+min(pois.glm$residuals)
+```
+
+e. Add a new component named “extra” to pois.glm, containing 10 random numbers 
+following a Poisson(2) distribution.
+```{r}
+new_component <- rpois(10, lambda = 2)
+pois.glm$extra <- new_component
+```
+
+
+

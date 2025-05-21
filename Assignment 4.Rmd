@@ -1,0 +1,65 @@
+---
+title: "Assignment 4"
+output: pdf_document
+---
+
+## Problem 1
+Create a list named movie_info to store the following information about a movie:
+  Title: "Inception"
+  Release year: 2010
+  Box office revenue (in millions): 829.9
+  Rotten Tomatoes scores: Tomatometer = 87, Audience = 91
+  Cast: "Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page", "Tom Hardy"
+```{r}
+movie_info <- list(
+  Title = "Inception",
+  Release_Year = 2010,
+  Box_Office_Revenue = 829.9,  
+  Rotten_Tomatoes_Scores = list(Tomatometer = 87, Audience = 91),
+  Cast = c("Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page", "Tom Hardy")
+)
+```
+
+a. Use str() to inspect the structure of the list.
+```{r}
+str(movie_info)
+```
+
+b. Add a new element to the list: the director's name ("Christopher Nolan").
+```{r}
+movie_info$Director <- "Christopher Nolan"
+movie_info
+```
+
+c. Access only the Tomatometer score using both $ and [[ indexing.
+```{r}
+# Need to index twice since Tomatometer itself is a list as well
+movie_info$Rotten_Tomatoes_Scores$Tomatometer
+movie_info[["Rotten_Tomatoes_Scores"]][["Tomatometer"]]
+movie_info
+```
+
+d. Create another list for another movie of your choice and combine the two lists 
+into a single list of movies named movie_collection.
+```{r}
+movie_info2 <- list(
+  Title = "The Conjuring",
+  Release_Year = 2013,
+  Box_Office_Revenue = 319.5,
+  Rotten_Tomatoes_Scores = list(Tomatometer = 86, Audience = 83),
+  Cast = c("Vera Farmiga", "Patrick Wilson", "Lili Taylor", "Ron Livingston"),
+  Director = "James Wan"
+)
+movie_info2
+
+# Create a nested list
+movie_collection <- list(Inception = movie_info, Conjuring = movie_info2)
+movie_collection
+```
+
+e. Use sapply() to extract the titles of all movies in movie_collection.
+```{r}
+movie_titles <- as.character(sapply(movie_collection, function(x) x$Title))
+# without as.character, movie_titles will be a list
+movie_titles
+```

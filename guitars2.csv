@@ -1,0 +1,9 @@
+Type,Body,Manufacturer,Model,Year,Color,Serial,Weight with Case (kg),Weight of Case (kg),Purchase Date,Purchased New,Purchase Price,Insured Value
+electric,solid,Gibson,Firebird,1972,sunburst,616619,9.88,5.90,1977,No,"$400","$10,000"
+electric,solid,Gibson,Les Paul,1976,wine,00235628,8.40,3.46,1976-09-14,Yes,"$510","$6,000"
+electric,hollow,Gibson,ES175,2002,sunburst,03531746,8.10,4.92,2012-10-01,No,"$2,000","$4,000"
+electric,solid,Fender,Stratocaster,2006,black,EJ15230,8.96,5.70,2014-06-20,No,"$1,135","$1,600"
+electric,solid,Fender,Telecaster,2007,blonde,60671,8.60,4.98,2014-05-07,No,,"$2,000"
+acoustic,flattop,Gibson,J-100 Xtra,1993,natural,90783019,6.78,4.76,1995-01-14,No,"$700","$3,000"
+acoustic,flattop,Martin,M-21,2010,natural,1452869,5.62,3.72,2022-08-09,No,"$3,200","$4,000"
+acoustic,flattop,Martin,D-28,2020,natural,2457919,7.58,5.58,2022-09-10,No,"$2,850","$4,000"

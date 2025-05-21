@@ -1,0 +1,102 @@
+---
+title: "Assignment 3"
+output: pdf_document
+---
+
+## Problem 1
+Obtain 100 exponential random variables (with rate 1) and arrange them by column 
+in a matrix called M with 10 rows and 10 columns. Use seed 3100.
+```{r}
+set.seed(3100)  
+M <- matrix(rexp(100, rate = 1), nrow = 10, ncol = 10) 
+M
+```
+
+a. Find the transpose of M.
+```{r}
+M_transpose <- t(M)  
+M_transpose
+```
+
+b. Find (M transpose) x M using matrix multiplication.
+```{r}
+M_trans_M <- M_transpose %*% M
+M_trans_M
+```
+
+c. Find 2.5M + 5.2I10, where I10 is an identity matrix that has 10 rows and 10 columns.
+
+```{r}
+I_10 <- diag(10) 
+sum <- (2.5 * M) + (5.2 * I_10)  
+sum
+```
+
+d. Find the inverse matrix of M.
+```{r}
+# Let's first check if M has an inverse by calculating its determinant
+det_M <- det(M) 
+det_M # As long as det_M is non-zero, it will have an inverse
+
+M_inverse <- solve(M)
+M_inverse
+```
+
+e. Find the overall mean of the elements in M.
+```{r}
+overall_mean <- mean(M)  
+overall_mean
+```
+
+f. Using which.max(), find the row of M with the largest sum.
+```{r}
+row_sums <- apply(M, 1, sum)
+row_w_largest_sum <- which.max(row_sums)
+row_w_largest_sum
+```
+
+g. For each column in M, find the percentage of elements greater than 1.
+```{r}
+percentage_above_1 <- apply(M, 2, function(x) sum(x > 1) / length(x) * 100)
+percentage_above_1 # Since there are 10 entries per column, expect to see a multiple of 10 
+```
+
+h. Using string functions, give the names “n1”, “n2”, …, “n10” to the rows of M, 
+and “v1”, “v2”, …, “v10” to the columns of M. Do not type out the name vectors.
+```{r}
+rownames(M) <- paste0("n", 1:10)
+colnames(M) <- paste0("v", 1:10)
+rownames(M)
+colnames(M)
+```
+
+i. Extract a sub matrix of M consisting of rows “n3”, “n4”, and “n5” and all 
+columns except “v2” and “v4”.
+```{r}
+sub_matrix <- M[c("n3", "n4", "n5"), c(1, 3, 5:10)]
+sub_matrix
+```
+
+j. Create a diagonal matrix L that has the same diagonal elements as M.
+```{r}
+L <- diag(diag(M))
+L
+```
+
+k. Add to L an additional row of all zeros after the last row.
+```{r}
+L_add_row <- rbind(L, rep(0, ncol(L))) # ncol() outputs the no. of columns
+L_add_row
+```
+
+l. Extract the last column of M as a 1-column matrix and the last row of M as a 1-row matrix. 
+Form a new matrix H by multiplying the last column of M by the last row using matrix multiplication.
+```{r}
+last_column <- M[, ncol(M), drop = FALSE]  
+last_row <- M[nrow(M), , drop = FALSE] 
+last_column
+last_row
+
+H <- last_column %*% last_row
+H
+```

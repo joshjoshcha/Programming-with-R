@@ -1,0 +1,58 @@
+---
+title: "Assignment 8.0"
+output: pdf_document
+---
+
+Select the following packages
+```{r}
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(janitor)
+library(lubridate)
+```
+
+a.
+```{r}
+guitars <- read_csv("guitars2.csv") |>
+  mutate(
+    `Purchase Price` = parse_number(`Purchase Price`),
+    `Insured Value` = parse_number(`Insured Value`),
+    `Purchase Date` = as.Date(`Purchase Date`, format = "%Y-%m-%d")) |>
+  select(-starts_with("Weight")) 
+
+guitars
+# There isn't any warning message, and everything looks alright.
+
+# I'll try another way to produce a warning message
+guitars2 <- read_csv("guitars2.csv",
+  col_select = !starts_with("Weight"),
+  col_types = cols(
+    `Purchase Price` = col_double(),
+    `Insured Value` = col_double(),
+    `Purchase Date` = col_date(),
+    .default = col_character()))
+# Now, there is an error message
+# This is because of the values in “Purchase Price”, “Insured Value”
+# e.g. $6000 isn't a valid numeric value, hence parsing fails.
+guitars2
+```
+
+b. 
+```{r}
+guitars <- clean_names(guitars)
+guitars
+```
+
+c.
+```{r}
+guitars$purchase_date[guitars$serial == "616619"] <- as.Date("1977-07-02")
+guitars
+```
+
+d.
+```{r}
+guitars$purchase_year <- year(guitars$purchase_date)
+guitars$purchase_month <- month(guitars$purchase_date, label = TRUE, abbr = TRUE)
+guitars
+```

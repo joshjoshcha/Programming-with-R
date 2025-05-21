@@ -1,0 +1,127 @@
+---
+title: "Assignment 1"
+output: pdf_document
+---
+
+## Problem 1
+Calculate the remainder after dividing 31079 into 170166719.
+```{r}
+# use the modulo operator %% to calculate the remainder
+remainder <- 170166719 %% 31079
+remainder
+```
+
+## Problem 2
+Calculate the respective areas of circles having radii 3, 4, …, 100.
+```{r}
+# area of circle is radius sqaured times pi
+areas <- pi * (3:100)^2
+# output will have 97 values since the sequence 3:100 consists of 97 values
+areas
+```
+
+## Problem 3
+Calculate the interest earned on an investment of $2000, assuming an interest rate of 3% compounded annually, for terms of 1, 2, …, 30 years.
+```{r}
+net_worth <- 2000 * (1.03^(1:30))
+# but what we're really interested is the "interest earned", so the profit
+interest <- net_worth - 2000
+interest
+```
+
+## Problem 4 
+Using the rep() and seq() functions as needed, create the following vectors:
+{ 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 4 4 4 4 4 }
+{ 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 }
+{ 1 2 3 4 5 2 3 4 5 6 3 4 5 6 7 4 5 6 7 8 5 6 7 8 9 }
+
+```{r}
+# the default setting of the rep() function is as follows: rep(x, times = 1, length.out = NA, each = 1)
+# for this problem we just need to manipulate the "times" and "each" argument
+x <- rep(0:4, each = 5)
+x
+
+y <- rep(1:5, times = 5)
+y
+
+z <- rep(1:5, times = 5) + rep(0:4, each = 5) # no need to worry about recycling since total # of values match
+z
+```
+
+## Problem 5
+Find the value of r^1 + r^2 + ... + r^n, for all values of n between 1 and 100, when r = 1.08.
+```{r}
+r <- 1.08 # the default r value set by the problem
+
+exponents <- 1:100 # this is a sequence of values from 1 to 100
+
+# sum of a geometric series uses the formula S = a * (1 - r^n) / (1 - r)
+sum_values <- (r * (1 - r^exponents)) / (1 - r)
+sum_values
+```
+
+## Problem 6
+Identify the elements of the sequence {2^1, …, 2^15} that exceed the corresponding elements of the sequence {1^3, …, 15^3}.
+```{r}
+# Let's first create the sequences and then compare them
+seq1 <- 2^(1:15)  
+seq2 <- (1:15)^3
+
+result <- seq1 > seq2 # this inequality will spit out a boolean value
+# if seq1 > seq2 is true, it will output "true"
+result
+# so the 1st & 10~15th element of the first seq. exceeds the corresponding elements of the second seq
+```
+
+## Problem 7
+The following are a sample of observations on incoming solar radiation at a greenhouse:
+{11.1, 10.6, 6.3, 8.8, 10.7, 11.2, 8.9, 12.2 }
+
+### Assign the data to an object called solar.radiation.
+``` {r}
+solar.radiation <- c(11.1, 10.6, 6.3, 8.8, 10.7, 11.2, 8.9, 12.2)
+``` 
+### Find the mean, median, range, and variance of the radiation observations.
+```{r}
+mean_solar <- mean(solar.radiation)
+median_solar <- median(solar.radiation)
+range_solar <- range(solar.radiation)
+variance_solar <- var(solar.radiation)
+mean_solar
+median_solar
+range_solar
+variance_solar
+```
+### Add 10 to each observation of solar.radiation and assign the result to sr10. Find the mean, median, range, and variance of sr10. Which statistics change, and by how much?
+```{r}
+sr10 <- solar.radiation + 10
+
+mean_sr10 <- mean(sr10)
+median_sr10 <- median(sr10)
+range_sr10 <- range(sr10)
+variance_sr10 <- var(sr10)
+mean_sr10 
+median_sr10 
+range_sr10 
+variance_sr10 
+
+# Adding 10 increases the mean, median, and range (both lower & upper limit) by that amount
+# Variance is unchanged
+```
+### Multiply each observation of solar.radiation by -2 and assign the result to srm2. Find the mean, median, range, and variance of srm2. How do the statistics change now?
+```{r} 
+srm2 <- solar.radiation * -2
+
+mean_srm2 <- mean(srm2)
+median_srm2 <- median(srm2)
+range_srm2 <- range(srm2)
+variance_srm2 <- var(srm2)
+mean_srm2
+median_srm2
+range_srm2
+variance_srm2
+
+# Multiplying by -2 multiplies the mean, median by that amount
+# Similar thing happens for range, but since the sign is changed, lower & upper limits swap places
+# Variance multiplies by the square of the (-2), that is 4
+```
